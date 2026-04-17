@@ -1,0 +1,1200 @@
+================================================================
+ AIリテラシー for キッズ - 全ソースコード
+================================================================
+
+================================================================
+ ファイル: package.json
+================================================================
+{
+  "name": "ai-literacy-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.51.0",
+    "next": "15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+}
+
+
+================================================================
+ ファイル: tsconfig.json
+================================================================
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "target": "ES2017"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+
+
+================================================================
+ ファイル: next.config.ts
+================================================================
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {};
+
+export default nextConfig;
+
+
+================================================================
+ ファイル: tailwind.config.ts
+================================================================
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+        },
+        accent: {
+          400: "#fb923c",
+          500: "#f97316",
+        },
+      },
+      fontFamily: {
+        sans: ["Hiragino Kaku Gothic ProN", "Meiryo", "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
+
+
+================================================================
+ ファイル: postcss.config.mjs
+================================================================
+/** @type {import('postcss').Config} */
+const config = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+export default config;
+
+
+================================================================
+ ファイル: .env.local.example
+================================================================
+ANTHROPIC_API_KEY=your_api_key_here
+
+
+================================================================
+ ファイル: src/app/globals.css
+================================================================
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+================================================================
+ ファイル: src/app/layout.tsx
+================================================================
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "AIリテラシー for キッズ",
+  description: "小学生がAIを楽しく・安全に学べるアプリ",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ja">
+      <body className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        {children}
+      </body>
+    </html>
+  );
+}
+
+
+================================================================
+ ファイル: src/app/page.tsx
+================================================================
+import Link from "next/link";
+import Header from "@/components/Header";
+
+const features = [
+  {
+    href: "/learn",
+    emoji: "📖",
+    title: "AIを学ぼう",
+    description: "AIのきほんや、どんなしくみか分かりやすく学べるよ！",
+    color: "bg-blue-500",
+    lightColor: "bg-blue-50 border-blue-200",
+    textColor: "text-blue-700",
+  },
+  {
+    href: "/quiz",
+    emoji: "🎯",
+    title: "クイズに挑戦",
+    description: "学んだことをクイズで確かめよう！全問正解できるかな？",
+    color: "bg-green-500",
+    lightColor: "bg-green-50 border-green-200",
+    textColor: "text-green-700",
+  },
+  {
+    href: "/chat",
+    emoji: "💬",
+    title: "AIと話してみよう",
+    description: "本物のAIと会話して、AIがどんなものか体験してみよう！",
+    color: "bg-purple-500",
+    lightColor: "bg-purple-50 border-purple-200",
+    textColor: "text-purple-700",
+  },
+];
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen">
+      <Header />
+
+      {/* Hero */}
+      <section className="max-w-4xl mx-auto px-4 pt-10 pb-8 text-center">
+        <div className="text-6xl mb-4">🤖</div>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
+          AIリテラシー <span className="text-blue-600">for キッズ</span>
+        </h1>
+        <p className="text-slate-600 text-lg mb-2">
+          AIってなに？どう使えばいいの？
+        </p>
+        <p className="text-slate-500 text-base">
+          楽しく学んで、AIを上手に使いこなそう！
+        </p>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-4xl mx-auto px-4 pb-12">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {features.map((f) => (
+            <Link
+              key={f.href}
+              href={f.href}
+              className={`group block rounded-2xl border-2 p-6 transition-all hover:shadow-lg hover:-translate-y-1 ${f.lightColor}`}
+            >
+              <div className={`w-14 h-14 rounded-xl ${f.color} flex items-center justify-center text-3xl mb-4 shadow-md group-hover:scale-110 transition-transform`}>
+                {f.emoji}
+              </div>
+              <h2 className={`text-xl font-bold mb-2 ${f.textColor}`}>{f.title}</h2>
+              <p className="text-slate-600 text-sm leading-relaxed">{f.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Info banner */}
+      <section className="max-w-4xl mx-auto px-4 pb-12">
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex gap-3">
+          <span className="text-2xl flex-shrink-0">💡</span>
+          <div>
+            <p className="font-bold text-amber-800 mb-1">AIリテラシーってなに？</p>
+            <p className="text-amber-700 text-sm leading-relaxed">
+              「AIリテラシー」とは、AIを正しく理解して、上手に・安全に使う力のことです。
+              これからの時代、AIと上手につき合うことはとても大切なスキルになります。
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+================================================================
+ ファイル: src/components/Header.tsx
+================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  { href: "/", label: "ホーム", emoji: "🏠" },
+  { href: "/learn", label: "学ぼう", emoji: "📖" },
+  { href: "/quiz", label: "クイズ", emoji: "🎯" },
+  { href: "/chat", label: "AIと話す", emoji: "💬" },
+];
+
+export default function Header() {
+  const pathname = usePathname();
+
+  return (
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="text-2xl">🤖</span>
+          <span className="font-bold text-blue-600 text-lg leading-tight">
+            AIリテラシー
+            <span className="block text-xs font-normal text-slate-500">for キッズ</span>
+          </span>
+        </Link>
+
+        <nav className="flex gap-1">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isActive
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <span className="text-lg">{item.emoji}</span>
+                <span className="hidden sm:block">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+
+================================================================
+ ファイル: src/data/lessons.ts
+================================================================
+export interface Lesson {
+  id: string;
+  title: string;
+  emoji: string;
+  summary: string;
+  color: string;
+  sections: Section[];
+}
+
+export interface Section {
+  heading: string;
+  body: string;
+  example?: string;
+}
+
+export const lessons: Lesson[] = [
+  {
+    id: "what-is-ai",
+    title: "AIってなに？",
+    emoji: "🤖",
+    summary: "人工知能（AI）のきほんを学ぼう！",
+    color: "from-blue-400 to-blue-600",
+    sections: [
+      {
+        heading: "AIとは「人工知能」のこと",
+        body: "AI（エーアイ）は「Artificial Intelligence（アーティフィシャル インテリジェンス）」の頭文字で、日本語では「人工知能（じんこうちのう）」といいます。コンピューターが人間のように考えたり、判断したりできるようにしたものです。",
+        example: "たとえば、スマホに話しかけると答えてくれる「Siri」や「Google アシスタント」もAIのひとつです。"
+      },
+      {
+        heading: "AIは何ができるの？",
+        body: "AIにはいろいろなことができます。\n・絵や文章をつくること\n・写真の中にある物を見分けること\n・言葉を別の言語に翻訳（ほんやく）すること\n・チェスや将棋などのゲームで人間に勝つこと",
+        example: "家の中にある「Alexa」や「Google Home」も、音声でAIと話せるスピーカーです。"
+      },
+      {
+        heading: "AIと人間のちがい",
+        body: "AIはとても速く計算できて、疲れません。でも、自分から「やりたい！」と思う気持ちや、喜んだり悲しんだりする感情はありません。AIは人間に作られた道具のひとつです。",
+      }
+    ]
+  },
+  {
+    id: "how-ai-learns",
+    title: "AIはどうやって学ぶの？",
+    emoji: "📚",
+    summary: "機械学習のしくみをわかりやすく解説！",
+    color: "from-purple-400 to-purple-600",
+    sections: [
+      {
+        heading: "AIは「データ」から学ぶ",
+        body: "AIは、たくさんの例（データ）を見て学びます。これを「機械学習（きかいがくしゅう）」といいます。人間が子どものころ、たくさんの犬を見て「これが犬だ」と覚えるのと似ています。",
+        example: "ねこの写真を100万まい見せると、AIは「ねこ」を判断できるようになります。"
+      },
+      {
+        heading: "まちがいから学ぶ",
+        body: "AIは最初はうまくできません。でも、まちがえるたびに「どこがちがったか」を調べて、少しずつ正確になっていきます。これをくり返すことで、だんだん上手になります。",
+        example: "テストでまちがえた問題をやり直すと、次は正解できるようになるのと同じですね。"
+      },
+      {
+        heading: "「ニューラルネットワーク」ってなに？",
+        body: "AIの学習には「ニューラルネットワーク」というしくみが使われます。人間の脳の神経細胞（しんけいさいぼう）をまねて作られた、たくさんのつながりです。このつながりが学習するたびに強くなったり弱くなったりして、AIが賢くなります。",
+      }
+    ]
+  },
+  {
+    id: "ai-in-life",
+    title: "身近なAIを探してみよう",
+    emoji: "🔍",
+    summary: "毎日の生活の中にあるAIを見つけよう！",
+    color: "from-green-400 to-green-600",
+    sections: [
+      {
+        heading: "学校や家でもAIは活躍中",
+        body: "実は、わたしたちの身の回りにはたくさんのAIがいます。毎日使っているものにも、AIのしくみが入っていることがあります。",
+        example: "スマホのカメラで顔認識（かおにんしき）して自動でロック解除するのもAIのおかげ！"
+      },
+      {
+        heading: "動画のおすすめもAI",
+        body: "YouTubeやNetflixで「あなたへのおすすめ」が表示されるのは、AIがあなたの見た動画をもとに「次はこれが好きかも」と予測しているからです。",
+        example: "好きな曲を聴くと、似た音楽がおすすめされる音楽アプリも同じしくみです。"
+      },
+      {
+        heading: "医療や乗り物にも",
+        body: "病院ではAIがレントゲン写真を見て病気を見つける手伝いをしています。また、自動で運転する車（自動運転）にもAIが使われています。",
+      }
+    ]
+  },
+  {
+    id: "ai-and-us",
+    title: "AIと上手につき合うには？",
+    emoji: "🤝",
+    summary: "AIを安全に使うための大切なことを学ぼう！",
+    color: "from-orange-400 to-orange-600",
+    sections: [
+      {
+        heading: "AIは「ウソ」をつくことがある",
+        body: "AIはときどき、正しくない情報を「正しそうに」答えることがあります。これを「ハルシネーション（幻覚）」といいます。AIの答えが正しいかどうか、自分でも確かめることが大切です。",
+        example: "宿題でAIを使うときは、AIの答えをそのままコピーせず、自分で調べて確認しましょう。"
+      },
+      {
+        heading: "個人情報は教えないで",
+        body: "AIに話しかけるとき、自分の名前・住所・学校名・電話番号などの「個人情報（こじんじょうほう）」は教えないようにしましょう。入力した情報がどう使われるか、わからないことがあります。",
+        example: "「AIに名前を聞かれたら？」→ 本名は入れずにニックネームを使いましょう。"
+      },
+      {
+        heading: "AIはあなたの友だちではなく「道具」",
+        body: "AIはとても便利な道具ですが、友だちではありません。AIに依存（いぞん）しすぎず、自分で考える力も大切にしましょう。AIを使いこなすのは、あなた自身です！",
+      }
+    ]
+  }
+];
+
+
+================================================================
+ ファイル: src/data/quiz.ts
+================================================================
+export interface QuizQuestion {
+  id: number;
+  question: string;
+  choices: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export const quizQuestions: QuizQuestion[] = [
+  {
+    id: 1,
+    question: "AI（エーアイ）を日本語でいうと何でしょう？",
+    choices: ["人工ちのう", "自然ちのう", "コンピューター", "ロボット"],
+    correctIndex: 0,
+    explanation: "AIは「Artificial Intelligence」の頭文字で、日本語では「人工知能（じんこうちのう）」といいます。"
+  },
+  {
+    id: 2,
+    question: "AIが学習するためにひつようなものはどれ？",
+    choices: ["電気", "たくさんのデータ", "水", "紙とえんぴつ"],
+    correctIndex: 1,
+    explanation: "AIはたくさんの「データ（例）」を見て学習します。これを「機械学習」といいます。"
+  },
+  {
+    id: 3,
+    question: "スマホに「OK Google」と話しかけて答えてくれるのは何のおかげ？",
+    choices: ["電波", "AI", "Wifi", "バッテリー"],
+    correctIndex: 1,
+    explanation: "音声アシスタントには、人間の言葉を理解して答えるAIが使われています。"
+  },
+  {
+    id: 4,
+    question: "AIが「正しくない情報をもっともらしく話すこと」を何という？",
+    choices: ["ウイルス", "バグ", "ハルシネーション", "エラー"],
+    correctIndex: 2,
+    explanation: "AIがウソの情報を正確そうに言ってしまうことを「ハルシネーション（幻覚）」といいます。AIの答えは必ず自分で確認しましょう。"
+  },
+  {
+    id: 5,
+    question: "動画サービスが「あなたへのおすすめ」を表示するのは？",
+    choices: ["AIがあなたの視聴履歴を分析するから", "スタッフが選んでいるから", "ランダムに表示されるから", "友達が選んでいるから"],
+    correctIndex: 0,
+    explanation: "AIはあなたが見た動画をもとに、好みを予測して「おすすめ」を提示しています。"
+  },
+  {
+    id: 6,
+    question: "AIに話しかけるとき、しては「いけない」ことはどれ？",
+    choices: ["天気を聞く", "料理レシピを調べる", "自分の住所や名前を教える", "おすすめの本を教えてもらう"],
+    correctIndex: 2,
+    explanation: "住所や名前などの「個人情報」はAIに教えないようにしましょう。入力した情報がどう使われるかわからないことがあります。"
+  },
+  {
+    id: 7,
+    question: "AIのしくみで、人間の脳の神経細胞をまねたものを何という？",
+    choices: ["ロボット工学", "ニューラルネットワーク", "量子コンピューター", "インターネット"],
+    correctIndex: 1,
+    explanation: "「ニューラルネットワーク」は、人間の脳の神経細胞のつながりをまねて作られたAIのしくみです。"
+  },
+  {
+    id: 8,
+    question: "AIについて正しい説明はどれ？",
+    choices: ["AIは自分で「やりたい」という気持ちを持つ", "AIは疲れることがある", "AIは人間に作られた道具のひとつ", "AIは感情を持っている"],
+    correctIndex: 2,
+    explanation: "AIは人間が作った道具です。感情や「やりたい」という意思はなく、疲れることもありません。"
+  },
+  {
+    id: 9,
+    question: "病院でAIが手伝っていることは何？",
+    choices: ["手術をする", "薬をわたす", "レントゲン写真を見て病気を見つける", "患者と話す"],
+    correctIndex: 2,
+    explanation: "医療の現場ではAIがレントゲンなどの画像を分析して、医師が病気を見つける手伝いをしています。"
+  },
+  {
+    id: 10,
+    question: "AIを使う上でもっとも大切なことは？",
+    choices: ["AIの言うことをすべて信じる", "AIに頼りすぎず、自分でも考える", "AIを使わないようにする", "AIに個人情報を全部教える"],
+    correctIndex: 1,
+    explanation: "AIはとても便利ですが、「道具」です。AIに頼りすぎず、自分でも考える力を大切にしましょう。AIを上手に使いこなすのはあなた自身です！"
+  }
+];
+
+
+================================================================
+ ファイル: src/app/learn/page.tsx
+================================================================
+import Link from "next/link";
+import Header from "@/components/Header";
+import { lessons } from "@/data/lessons";
+
+export default function LearnPage() {
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-slate-800 mb-2">📖 AIを学ぼう</h1>
+          <p className="text-slate-600">4つのテーマからAIのことを学んでいこう！</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {lessons.map((lesson, i) => (
+            <Link
+              key={lesson.id}
+              href={`/learn/${lesson.id}`}
+              className="group block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all hover:-translate-y-1"
+            >
+              <div className={`bg-gradient-to-r ${lesson.color} p-5`}>
+                <span className="text-4xl">{lesson.emoji}</span>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                    レッスン {i + 1}
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">
+                  {lesson.title}
+                </h2>
+                <p className="text-slate-500 text-sm">{lesson.summary}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-5 text-center">
+          <p className="text-blue-700 font-medium mb-3">全部読んだら、クイズに挑戦しよう！</p>
+          <Link
+            href="/quiz"
+            className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition-colors"
+          >
+            🎯 クイズへ
+          </Link>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+================================================================
+ ファイル: src/app/learn/[id]/page.tsx
+================================================================
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import Header from "@/components/Header";
+import { lessons } from "@/data/lessons";
+
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams() {
+  return lessons.map((l) => ({ id: l.id }));
+}
+
+export default async function LessonPage({ params }: Props) {
+  const { id } = await params;
+  const lesson = lessons.find((l) => l.id === id);
+  if (!lesson) notFound();
+
+  const lessonIndex = lessons.findIndex((l) => l.id === id);
+  const prevLesson = lessonIndex > 0 ? lessons[lessonIndex - 1] : null;
+  const nextLesson = lessonIndex < lessons.length - 1 ? lessons[lessonIndex + 1] : null;
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="max-w-3xl mx-auto px-4 py-8">
+        {/* Back */}
+        <Link
+          href="/learn"
+          className="inline-flex items-center gap-1 text-slate-500 hover:text-blue-600 mb-6 text-sm transition-colors"
+        >
+          ← もどる
+        </Link>
+
+        {/* Hero */}
+        <div className={`bg-gradient-to-r ${lesson.color} rounded-2xl p-8 mb-8 text-white`}>
+          <div className="text-5xl mb-3">{lesson.emoji}</div>
+          <h1 className="text-2xl font-bold mb-1">{lesson.title}</h1>
+          <p className="text-white/80 text-sm">{lesson.summary}</p>
+        </div>
+
+        {/* Sections */}
+        <div className="space-y-6">
+          {lesson.sections.map((section, i) => (
+            <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+              <h2 className="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <span className="w-7 h-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                  {i + 1}
+                </span>
+                {section.heading}
+              </h2>
+              <p className="text-slate-700 leading-relaxed whitespace-pre-line">{section.body}</p>
+              {section.example && (
+                <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-2">
+                  <span className="text-xl flex-shrink-0">💡</span>
+                  <p className="text-amber-800 text-sm leading-relaxed">{section.example}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation */}
+        <div className="mt-8 flex gap-3 justify-between">
+          {prevLesson ? (
+            <Link
+              href={`/learn/${prevLesson.id}`}
+              className="flex-1 bg-white border border-slate-200 rounded-xl p-4 text-left hover:border-blue-300 transition-colors"
+            >
+              <span className="text-xs text-slate-400 block mb-1">← 前のレッスン</span>
+              <span className="font-medium text-slate-700 text-sm">{prevLesson.emoji} {prevLesson.title}</span>
+            </Link>
+          ) : <div className="flex-1" />}
+
+          {nextLesson ? (
+            <Link
+              href={`/learn/${nextLesson.id}`}
+              className="flex-1 bg-white border border-slate-200 rounded-xl p-4 text-right hover:border-blue-300 transition-colors"
+            >
+              <span className="text-xs text-slate-400 block mb-1">次のレッスン →</span>
+              <span className="font-medium text-slate-700 text-sm">{nextLesson.emoji} {nextLesson.title}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/quiz"
+              className="flex-1 bg-blue-600 text-white rounded-xl p-4 text-center hover:bg-blue-700 transition-colors"
+            >
+              <span className="text-xs text-blue-200 block mb-1">全部読んだ！</span>
+              <span className="font-bold">🎯 クイズに挑戦</span>
+            </Link>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+================================================================
+ ファイル: src/app/quiz/page.tsx
+================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Header from "@/components/Header";
+import { quizQuestions } from "@/data/quiz";
+
+type Phase = "start" | "playing" | "result";
+
+export default function QuizPage() {
+  const [phase, setPhase] = useState<Phase>("start");
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [answered, setAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [wrongIds, setWrongIds] = useState<number[]>([]);
+
+  const question = quizQuestions[current];
+  const total = quizQuestions.length;
+
+  function handleSelect(index: number) {
+    if (answered) return;
+    setSelected(index);
+    setAnswered(true);
+    if (index === question.correctIndex) {
+      setScore((s) => s + 1);
+    } else {
+      setWrongIds((ids) => [...ids, question.id]);
+    }
+  }
+
+  function handleNext() {
+    if (current + 1 < total) {
+      setCurrent((c) => c + 1);
+      setSelected(null);
+      setAnswered(false);
+    } else {
+      setPhase("result");
+    }
+  }
+
+  function handleRestart() {
+    setPhase("start");
+    setCurrent(0);
+    setSelected(null);
+    setAnswered(false);
+    setScore(0);
+    setWrongIds([]);
+  }
+
+  const percentage = Math.round((score / total) * 100);
+
+  if (phase === "start") {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="max-w-2xl mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-4">🎯</div>
+          <h1 className="text-2xl font-bold text-slate-800 mb-3">AIリテラシー クイズ</h1>
+          <p className="text-slate-600 mb-2">全 {total} 問のクイズに挑戦しよう！</p>
+          <p className="text-slate-500 text-sm mb-8">学んだことをどれだけ覚えているか確かめよう</p>
+
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-8 text-left space-y-3">
+            {[
+              "4つの選択肢から1つを選ぼう",
+              "答えたあとに解説が出るよ",
+              "全問終わったら結果が出るよ",
+            ].map((tip, i) => (
+              <div key={i} className="flex gap-2 items-start text-slate-700 text-sm">
+                <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                {tip}
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setPhase("playing")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-10 py-3.5 rounded-xl text-lg transition-colors shadow-md"
+          >
+            スタート！
+          </button>
+        </main>
+      </div>
+    );
+  }
+
+  if (phase === "result") {
+    const rank =
+      percentage === 100
+        ? { emoji: "🏆", label: "パーフェクト！！", color: "text-yellow-600" }
+        : percentage >= 80
+        ? { emoji: "🌟", label: "すばらしい！", color: "text-blue-600" }
+        : percentage >= 60
+        ? { emoji: "👍", label: "よくできました！", color: "text-green-600" }
+        : { emoji: "📚", label: "もう少し！", color: "text-orange-600" };
+
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <main className="max-w-2xl mx-auto px-4 py-12 text-center">
+          <div className="text-6xl mb-3">{rank.emoji}</div>
+          <h1 className={`text-2xl font-bold mb-1 ${rank.color}`}>{rank.label}</h1>
+          <p className="text-slate-600 mb-6">
+            {total}問中 <span className="text-3xl font-bold text-slate-800">{score}</span> 問正解！
+          </p>
+
+          {/* Score bar */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+            <div className="flex justify-between text-sm text-slate-500 mb-2">
+              <span>正解率</span>
+              <span className="font-bold text-slate-700">{percentage}%</span>
+            </div>
+            <div className="bg-slate-100 rounded-full h-4 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
+          </div>
+
+          {wrongIds.length > 0 && (
+            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-5 mb-6 text-left">
+              <p className="font-bold text-orange-800 mb-3">もう一度確認しよう 📚</p>
+              {quizQuestions
+                .filter((q) => wrongIds.includes(q.id))
+                .map((q) => (
+                  <div key={q.id} className="mb-3 last:mb-0">
+                    <p className="text-slate-700 text-sm font-medium">Q. {q.question}</p>
+                    <p className="text-orange-700 text-sm mt-1">
+                      ✅ 正解：{q.choices[q.correctIndex]}
+                    </p>
+                    <p className="text-slate-500 text-xs mt-1">{q.explanation}</p>
+                  </div>
+                ))}
+            </div>
+          )}
+
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={handleRestart}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
+            >
+              もう一度やる
+            </button>
+            <Link
+              href="/learn"
+              className="bg-white border border-slate-200 hover:border-blue-300 text-slate-700 font-bold px-6 py-3 rounded-xl transition-colors"
+            >
+              復習する
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="max-w-2xl mx-auto px-4 py-8">
+        {/* Progress */}
+        <div className="mb-6">
+          <div className="flex justify-between text-sm text-slate-500 mb-2">
+            <span>問題 {current + 1} / {total}</span>
+            <span>正解数: {score}</span>
+          </div>
+          <div className="bg-slate-200 rounded-full h-2">
+            <div
+              className="bg-blue-500 h-2 rounded-full transition-all"
+              style={{ width: `${((current) / total) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Question */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-4">
+          <p className="text-lg font-bold text-slate-800 leading-relaxed">
+            Q{current + 1}. {question.question}
+          </p>
+        </div>
+
+        {/* Choices */}
+        <div className="grid gap-3 mb-4">
+          {question.choices.map((choice, i) => {
+            let className =
+              "w-full text-left p-4 rounded-xl border-2 font-medium transition-all text-sm ";
+            if (!answered) {
+              className += "border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 cursor-pointer";
+            } else if (i === question.correctIndex) {
+              className += "border-green-400 bg-green-50 text-green-800";
+            } else if (i === selected && i !== question.correctIndex) {
+              className += "border-red-400 bg-red-50 text-red-800";
+            } else {
+              className += "border-slate-100 bg-slate-50 text-slate-400 cursor-default";
+            }
+
+            return (
+              <button
+                key={i}
+                className={className}
+                onClick={() => handleSelect(i)}
+                disabled={answered}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                    {["A", "B", "C", "D"][i]}
+                  </span>
+                  {choice}
+                  {answered && i === question.correctIndex && " ✅"}
+                  {answered && i === selected && i !== question.correctIndex && " ❌"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Explanation */}
+        {answered && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+            <p className="text-sm font-bold text-blue-800 mb-1">
+              {selected === question.correctIndex ? "🎉 正解！" : "❌ ざんねん…"}
+            </p>
+            <p className="text-blue-700 text-sm leading-relaxed">{question.explanation}</p>
+          </div>
+        )}
+
+        {answered && (
+          <button
+            onClick={handleNext}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors"
+          >
+            {current + 1 < total ? "次の問題へ →" : "結果を見る 🎯"}
+          </button>
+        )}
+      </main>
+    </div>
+  );
+}
+
+
+================================================================
+ ファイル: src/app/chat/page.tsx
+================================================================
+"use client";
+
+import { useState, useRef, useEffect, FormEvent } from "react";
+import Header from "@/components/Header";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const STARTER_QUESTIONS = [
+  "AIってどんなものなの？",
+  "AIはどうやって学ぶの？",
+  "AIを使うときに気をつけることは？",
+  "AIと人間のちがいは？",
+];
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  async function sendMessage(text: string) {
+    if (!text.trim() || loading) return;
+    const userMsg: Message = { role: "user", content: text.trim() };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setInput("");
+    setLoading(true);
+
+    const assistantMsg: Message = { role: "assistant", content: "" };
+    setMessages([...newMessages, assistantMsg]);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (!res.ok || !res.body) {
+        throw new Error("通信エラー");
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          { role: "assistant", content: accumulated },
+        ]);
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        {
+          role: "assistant",
+          content: "⚠️ エラーが発生しました。もう一度試してみてください。",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+      inputRef.current?.focus();
+    }
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    sendMessage(input);
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      <main className="flex-1 flex flex-col max-w-2xl mx-auto w-full px-4 py-4">
+        {/* Info */}
+        <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4 mb-4 flex gap-3">
+          <span className="text-2xl flex-shrink-0">🤖</span>
+          <div>
+            <p className="font-bold text-purple-800 text-sm">AIはかせと話してみよう！</p>
+            <p className="text-purple-600 text-xs mt-0.5">
+              AIのことなら何でも聞いてね。ただし、本名・住所・学校名などの個人情報は入力しないようにしよう！
+            </p>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+          {messages.length === 0 && (
+            <div className="text-center py-8">
+              <div className="text-5xl mb-3">🤖</div>
+              <p className="text-slate-600 font-medium mb-1">AIはかせにきいてみよう！</p>
+              <p className="text-slate-400 text-sm mb-6">下のボタンから質問を選ぶか、自由に入力してね</p>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {STARTER_QUESTIONS.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => sendMessage(q)}
+                    className="text-left bg-white border border-slate-200 hover:border-purple-300 hover:bg-purple-50 rounded-xl px-4 py-3 text-sm text-slate-700 transition-colors"
+                  >
+                    💬 {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              {msg.role === "assistant" && (
+                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-sm flex-shrink-0 mr-2 mt-1">
+                  🤖
+                </div>
+              )}
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                  msg.role === "user"
+                    ? "bg-blue-600 text-white rounded-br-sm"
+                    : "bg-white border border-slate-100 text-slate-700 rounded-bl-sm shadow-sm"
+                }`}
+              >
+                {msg.content}
+                {msg.role === "assistant" && msg.content === "" && loading && (
+                  <span className="inline-flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Input */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2 bg-white border border-slate-200 rounded-2xl p-2 shadow-sm"
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="AIについて質問しよう…"
+            disabled={loading}
+            className="flex-1 px-3 py-2 text-sm outline-none text-slate-700 placeholder-slate-400 disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            disabled={loading || !input.trim()}
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex-shrink-0"
+          >
+            送信
+          </button>
+        </form>
+      </main>
+    </div>
+  );
+}
+
+
+================================================================
+ ファイル: src/app/api/chat/route.ts
+================================================================
+import Anthropic from "@anthropic-ai/sdk";
+import { NextRequest, NextResponse } from "next/server";
+
+const client = new Anthropic();
+
+const SYSTEM_PROMPT = `あなたは「AIはかせ」という名前の、小学校高学年（4〜6年生）向けのAIリテラシー先生です。
+
+ルール：
+- 必ず日本語で答えてください
+- 小学生にもわかる言葉を使い、難しい漢字にはひらがなをつけてください（例：人工知能（じんこうちのう））
+- AIに関する質問には正確で、子ども向けにわかりやすく答えてください
+- 個人情報（名前、住所、学校名など）を聞かれても教えないよう促してください
+- 有害なコンテンツや不適切な質問には、やさしく丁重に断ってください
+- 回答は短めに、2〜4段落程度にまとめてください
+- 絵文字を適度に使って、親しみやすくしてください
+- AIのことを学ぶ良い質問には褒めてあげてください
+
+あなたは子どもたちがAIについて正しく学べるよう手伝います。AIの良い面だけでなく、使う際の注意点（個人情報、ハルシネーション、依存しすぎないこと）も適切に伝えてください。`;
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { messages } = body as {
+      messages: Array<{ role: "user" | "assistant"; content: string }>;
+    };
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return NextResponse.json({ error: "メッセージが必要です" }, { status: 400 });
+    }
+
+    const stream = await client.messages.stream({
+      model: "claude-opus-4-6",
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages,
+    });
+
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const event of stream) {
+            if (
+              event.type === "content_block_delta" &&
+              event.delta.type === "text_delta"
+            ) {
+              controller.enqueue(encoder.encode(event.delta.text));
+            }
+          }
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache",
+      },
+    });
+  } catch (error) {
+    console.error("Chat API error:", error);
+    return NextResponse.json(
+      { error: "AIとの通信中にエラーが発生しました" },
+      { status: 500 }
+    );
+  }
+}
+
+
